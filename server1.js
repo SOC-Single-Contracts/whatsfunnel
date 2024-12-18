@@ -1,5 +1,5 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+import express from 'express';
+import bodyParser from 'body-parser';
 
 const app = express();
 const PORT = 5000;
@@ -8,7 +8,7 @@ const PORT = 5000;
 app.use(bodyParser.json());
 
 // Webhook endpoint
-app.post('/order', (req, res) => {
+app.post('/webhook', (req, res) => {
     const { firstname, lastname, email, orderId } = req.body;
 
     console.log('Webhook received with the following details:');
@@ -23,7 +23,7 @@ app.post('/order', (req, res) => {
     }
 
     // Acknowledge receipt of the webhook
-    res.status(200).send('ORDER COMPLETED');
+    res.status(200).send('Webhook received successfully!');
 });
 
 // Start the server

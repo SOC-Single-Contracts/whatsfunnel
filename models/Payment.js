@@ -12,6 +12,7 @@ const paymentSchema = new mongoose.Schema(
     buyer_country: { type: String },
     buyer_country_code: { type: String },
     buyer_email: { type: String, required: true },
+    buyer_password: { type: String, required: true },
     buyer_firstname: { type: String },
     buyer_id: { type: String },
     buyer_lastname: { type: String },

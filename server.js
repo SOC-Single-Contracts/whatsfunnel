@@ -120,8 +120,8 @@ app.post("/webhook", async (req, res) => {
       subject: "Login details",
       text: `
       Here is your login details:
-      Email: ${buyer_email}.
-      Password: ${buyer_password}.`,
+      Email: ${buyer_email}
+      Password: ${buyer_password}`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {

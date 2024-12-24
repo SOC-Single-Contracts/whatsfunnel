@@ -102,6 +102,18 @@ app.post("/webhook", async (req, res) => {
       });
     }
 
+    const hashedPassword = await bcrypt.hash(buyer_password, 10);
+
+    // Create a new user
+    const newUser = new Auth({
+      email:buyer_email,
+      password: hashedPassword,
+    });
+
+    // Save user to DB
+    await newUser.save();
+
+
     const mailOptions = {
       from: "info@whatsfunnels.ai",
       to: buyer_email,
@@ -138,34 +150,34 @@ app.post("/webhook", async (req, res) => {
 
 
 // POST /auth/signup
-app.post('/auth/signup', async (req, res) => {
-  try {
-    const { email, password } = req.body;
+// app.post('/auth/signup', async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
 
-    // Check if user already exists
-    const existingUser = await Auth.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'email already taken' });
-    }
+//     // Check if user already exists
+//     const existingUser = await Auth.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: 'email already taken' });
+//     }
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+//     // Hash the password
+//     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
-    const newUser = new Auth({
-      email,
-      password: hashedPassword,
-    });
+//     // Create a new user
+//     const newUser = new Auth({
+//       email,
+//       password: hashedPassword,
+//     });
 
-    // Save user to DB
-    await newUser.save();
+//     // Save user to DB
+//     await newUser.save();
 
-    return res.status(201).json({ message: 'User created successfully' });
-  } catch (error) {
-    console.error('Signup error:', error);
-    return res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
+//     return res.status(201).json({ message: 'User created successfully' });
+//   } catch (error) {
+//     console.error('Signup error:', error);
+//     return res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// });
 
 // POST /auth/login
 app.post('/auth/login', async (req, res) => {

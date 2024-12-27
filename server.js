@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import connectDB from "./db/db.js";
 import Payment from "./models/Payment.js";
 import Auth from "./models/Auth.js";
+import AffiliatedLink from "./models/AffiliatedLink.js"; 
 import cors from "cors";
 import nodemailer from "nodemailer";
 
@@ -213,7 +214,75 @@ app.post('/auth/login', async (req, res) => {
   }
 });
 
+
+// POST /affiliated-link
+app.post("/affiliated-link", async (req, res) => {
+  try {
+    const { affiliated_link, agency_id } = req.body;
+
+    if (!affiliated_link || !agency_id) {
+      return res.status(400).json({
+        status: "error",
+        message: "Both affiliated_link and agency_id are required.",
+      });
+    }
+
+    // Create a new affiliated link entry
+    const newAffiliatedLink = new AffiliatedLink({
+      affiliated_link,
+      agency_id,
+    });
+
+    // Save to DB
+    await newAffiliatedLink.save();
+
+    res.status(201).json({
+      status: "success",
+      message: "Affiliated link saved successfully",
+      data: newAffiliatedLink,
+    });
+  } catch (error) {
+    console.error("Error saving affiliated link:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+      data: error.message,
+    });
+  }
+});
+
+// GET /affiliated-link/:agency_id
+app.get("/affiliated-link/:agency_id", async (req, res) => {
+  try {
+    const { agency_id } = req.params;
+
+    // Find affiliated links by agency_id
+    const affiliatedLinks = await AffiliatedLink.find({ agency_id });
+
+    if (affiliatedLinks.length === 0) {
+      return res.status(404).json({
+        status: "error",
+        message: "No affiliated links found for the given agency ID",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: affiliatedLinks,
+    });
+  } catch (error) {
+    console.error("Error fetching affiliated links:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+      data: error.message,
+    });
+  }
+});
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Webhook server running on http://localhost:${PORT}`);
 });
+

@@ -197,6 +197,14 @@ app.post('/auth/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
+
+    const payment = await Payment.findOne({ buyer_email:email });
+    if (!payment) {
+      return res.status(404).json({ message: 'No payment found for this email' });
+    }
+
+    const { order_id } = payment;
+
     // If password is correct, generate a token
     const token = jwt.sign(
       { userId: user._id, email: user.email },
@@ -207,6 +215,7 @@ app.post('/auth/login', async (req, res) => {
     return res.status(200).json({ 
       message: 'Login successful',
       token,
+      orderId: order_id
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -257,9 +266,9 @@ app.get("/affiliated-link/:agency_id", async (req, res) => {
     const { agency_id } = req.params;
 
     // Find affiliated links by agency_id
-    const affiliatedLinks = await AffiliatedLink.find({ agency_id });
+    const affiliatedLink = await AffiliatedLink.findOne({ agency_id });
 
-    if (affiliatedLinks.length === 0) {
+    if (!affiliatedLink) {
       return res.status(404).json({
         status: "error",
         message: "No affiliated links found for the given agency ID",
@@ -268,7 +277,7 @@ app.get("/affiliated-link/:agency_id", async (req, res) => {
 
     res.status(200).json({
       status: "success",
-      data: affiliatedLinks,
+      data: affiliatedLink,
     });
   } catch (error) {
     console.error("Error fetching affiliated links:", error);

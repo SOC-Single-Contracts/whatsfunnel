@@ -28,7 +28,7 @@ const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
     user: "info@whatsfunnels.ai",
-    pass: "WhatsFunnels2024!",
+    pass: "x)-=e~Dh-4pya#%",
   },
 });
 
